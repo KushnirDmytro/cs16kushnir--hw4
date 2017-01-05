@@ -1,6 +1,15 @@
 package ua.edu.ucu.autocomplete;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import ua.edu.ucu.tries.Trie;
+import ua.edu.ucu.tries.Tuple;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Map;
+
+import static java.lang.System.in;
 
 /**
  *
@@ -11,30 +20,63 @@ public class PrefixMatches {
     private Trie trie;
 
     public PrefixMatches(Trie trie) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        this.trie = trie;
     }
 
     public int load(String... strings) {
-        throw new UnsupportedOperationException("Not supported yet.");        
+        //returns ammount of words added
+        int counter = 0;
+        for (String string: strings){ //iterates potential array
+            String[] splitedStr = string.trim().split("\\s+"); // trims and splits a potential string of words
+            for (String word: splitedStr){  //forms tuple to fit the nodes structure in Trie class
+                if (getWordValue(word) < 3) continue; //condition of words length 2+ characters
+                Tuple t = new Tuple(word, getWordValue(word));
+                this.trie.add(t);
+                ++counter;
+            }
+        }
+        return counter;
+    }
+
+
+    private int getWordValue(String word){
+        return word.length();
     }
 
     public boolean contains(String word) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.trie.contains(word);
     }
 
     public boolean delete(String word) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.trie.delete(word);
     }
 
-    public Iterable<String> wordsWithPrefix(String pref) {
-        throw new UnsupportedOperationException("Not supported yet.");        
+    public Iterable<String> wordsWithPrefix(String pref){
+        if (pref.length() > 1) {
+            return this.trie.wordsWithPrefix(pref);
+        }
+        return new ArrayList<String>();
     }
 
-    public Iterable<String> wordsWithPrefix(String pref, int k) {
-        throw new UnsupportedOperationException("Not supported yet.");        
+    public Iterable<String> wordsWithPrefix(String pref, int k){
+        if (pref.length() > 1) {
+            ArrayList<String> result = new ArrayList<>();
+            int counter = 0;
+            Iterator<String> rawIter = this.trie.wordsWithPrefix(pref).iterator();
+            String word;
+            while (rawIter.hasNext()){
+                word = rawIter.next();
+                if (word.length() < 3 + k){
+                    result.add(word);
+                }
+                else break; // use this condition from properties of our BFS sequence not to decrease size
+            }
+            return result;
+        }
+        return new ArrayList<String>();
     }
 
     public int size() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return this.trie.size();
     }
 }

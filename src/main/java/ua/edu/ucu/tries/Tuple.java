@@ -5,7 +5,7 @@ public final class Tuple {
     public final int weight;
 
     public Tuple(String term, int weight) {
-        this.term = term;
+        this.term = term.toLowerCase();
         this.weight = weight;
     }  
 }
